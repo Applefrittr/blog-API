@@ -1,4 +1,4 @@
-const mongoose = requrei("mongoose");
+const mongoose = require("mongoose");
 const { DateTime } = require("luxon");
 
 const Schema = mongoose.Schema;
