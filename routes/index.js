@@ -9,8 +9,8 @@ router.get("/", postController.home);
 // GET all posts
 router.get("/posts", postController.allPosts);
 
-// POST(create) a new post 
-router.post("/posts", postController.createPost)
+// POST(create) a new post
+router.post("/posts", postController.createPost);
 
 // GET a specific post
 router.get("/posts/:postid", postController.onePost_GET);
@@ -19,12 +19,15 @@ router.get("/posts/:postid", postController.onePost_GET);
 router.get("/posts/:postid/comments", postController.onePost_comments_GET);
 
 // POST(create) a new comment on a specific post
-router.post("/posts/:postid/comments", postController.onePost_comments_POST)
+router.post("/posts/:postid/comments", postController.onePost_comments_POST);
 
 // Post(create) new user
 router.post("/user/create", userController.create);
 
 // Post user log in
-router.post("/user/login", userController.login);
+router.post("/user", userController.user_POST);
+
+// GET user information
+router.get("/user", userController.user_GET);
 
 module.exports = router;
