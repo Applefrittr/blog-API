@@ -3,6 +3,7 @@ const { body, validationResult } = require("express-validator");
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const handleToken = require("./handle-token");
 
 // Create a new user with a hashed password using bcrypt
 exports.create = asyncHandler(async (req, res, next) => {
@@ -43,7 +44,7 @@ exports.user_POST = asyncHandler(async (req, res, next) => {
 
 // recieves a JWT from the front end, verifies, decodes, and then passes payload back to the front end (the logged in user info)
 exports.user_GET = [
-  verifyToken,
+  handleToken,
   asyncHandler(async (req, res, next) => {
     jwt.verify(req.token, process.env.ACCESS_TOKEN_SECRET, (err, payload) => {
       if (err) {
@@ -54,17 +55,3 @@ exports.user_GET = [
     });
   }),
 ];
-
-// Verify a JWT passed from the front end helper function
-function verifyToken(req, res, next) {
-  const bearerHeader = req.headers["authorization"];
-
-  if (bearerHeader) {
-    const bearer = bearerHeader.split(" ");
-    const bearerToken = bearer[1];
-    req.token = bearerToken;
-    next();
-  } else {
-    res.json({ message: "No current user, Forbidden" });
-  }
-}
