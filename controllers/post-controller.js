@@ -59,9 +59,51 @@ exports.createPost = [
   }),
 ];
 
-exports.onePost_GET = asyncHandler(async (req, res, next) => {
-  res.send(`Get the specific post ${req.params.postid}`);
-});
+exports.onePost_GET = [
+  handleToken,
+  asyncHandler(async (req, res, next) => {
+    jwt.verify(
+      req.token,
+      process.env.ACCESS_TOKEN_SECRET,
+      async (err, payload) => {
+        if (err) {
+          res.json({ message: "Forbidden" });
+        } else {
+          const post = await Post.findById(req.params.postid)
+            .populate("comments")
+            .exec();
+          console.log(post);
+
+          res.json({ message: "Returned post", post });
+        }
+      }
+    );
+  }),
+];
+
+exports.onePost_POST = [
+  handleToken,
+  asyncHandler(async (req, res, next) => {
+    jwt.verify(
+      req.token,
+      process.env.ACCESS_TOKEN_SECRET,
+      async (err, payload) => {
+        if (err) {
+          res.json({ message: "Forbidden" });
+        } else {
+          const post = await Post.findById(req.params.postid).exec();
+          console.log(post);
+          post.title = req.body.title;
+          post.text = req.body.text;
+
+          await post.save();
+
+          res.json({ message: "Post Updated" });
+        }
+      }
+    );
+  }),
+];
 
 exports.onePost_comments_GET = asyncHandler(async (req, res, next) => {
   res.send(`Get all comments on specific post ${req.params.postid}`);

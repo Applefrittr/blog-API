@@ -15,6 +15,9 @@ router.post("/posts", postController.createPost);
 // GET a specific post
 router.get("/posts/:postid", postController.onePost_GET);
 
+// POST an update (edit) a specific post
+router.post("/posts/:postid", postController.onePost_POST);
+
 // GET all comments on a specific post
 router.get("/posts/:postid/comments", postController.onePost_comments_GET);
 
