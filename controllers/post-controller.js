@@ -21,7 +21,6 @@ exports.allPosts = [
           res.json({ message: "Forbidden" });
         } else {
           const allPosts = await Post.find().populate("comments").exec();
-          console.log(allPosts);
 
           res.json({ message: "Returned all Posts", allPosts });
         }
@@ -42,7 +41,6 @@ exports.createPost = [
         if (err) {
           res.json({ message: "Forbidden" });
         } else {
-          console.log(req.body.title, req.body.text);
           const post = new Post({
             title: req.body.title,
             text: req.body.text,
@@ -59,6 +57,7 @@ exports.createPost = [
   }),
 ];
 
+// GET controller for returning 1 specific post back.  Protected by jwt
 exports.onePost_GET = [
   handleToken,
   asyncHandler(async (req, res, next) => {
@@ -72,8 +71,6 @@ exports.onePost_GET = [
           const post = await Post.findById(req.params.postid)
             .populate("comments")
             .exec();
-          console.log(post);
-
           res.json({ message: "Returned post", post });
         }
       }
@@ -81,6 +78,7 @@ exports.onePost_GET = [
   }),
 ];
 
+// Post controller for handling updates to a specific post passed from teh front end.  Protected by jwt
 exports.onePost_POST = [
   handleToken,
   asyncHandler(async (req, res, next) => {
@@ -92,13 +90,34 @@ exports.onePost_POST = [
           res.json({ message: "Forbidden" });
         } else {
           const post = await Post.findById(req.params.postid).exec();
-          console.log(post);
           post.title = req.body.title;
           post.text = req.body.text;
-
+          req.body.published
+            ? (post.published = true)
+            : (post.published = false);
           await post.save();
 
           res.json({ message: "Post Updated" });
+        }
+      }
+    );
+  }),
+];
+
+// DELETE controller to delete a specific post.  Protected by jwt
+exports.onePost_DELETE = [
+  handleToken,
+  asyncHandler(async (req, res, next) => {
+    jwt.verify(
+      req.token,
+      process.env.ACCESS_TOKEN_SECRET,
+      async (err, payload) => {
+        if (err) {
+          res.json({ message: "Forbidden" });
+        } else {
+          const post = await Post.findByIdAndRemove(req.params.postid).exec();
+
+          res.json({ message: "Post Deleted" });
         }
       }
     );

@@ -18,6 +18,9 @@ router.get("/posts/:postid", postController.onePost_GET);
 // POST an update (edit) a specific post
 router.post("/posts/:postid", postController.onePost_POST);
 
+// DELETE a specific post
+router.delete("/posts/:postid", postController.onePost_DELETE);
+
 // GET all comments on a specific post
 router.get("/posts/:postid/comments", postController.onePost_comments_GET);
 
