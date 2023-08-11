@@ -19,7 +19,7 @@ const PostSchema = new Schema(
 );
 
 PostSchema.virtual("dated_formatted").get(function () {
-  return DateTime.fromJSDate(this.dated).toLocaleString(DateTime.DATETIME_FULL);
+  return DateTime.fromJSDate(this.dated).toLocaleString(DateTime.DATE_FULL);
 });
 
 module.exports = mongoose.model("posts", PostSchema);

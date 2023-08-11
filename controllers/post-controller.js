@@ -9,25 +9,15 @@ exports.home = asyncHandler(async (req, res, next) => {
   res.send("Welcome to the Blog!");
 });
 
-// GET controller for returning all posts in the database.  Protected by jwt.
-exports.allPosts = [
-  handleToken,
-  asyncHandler(async (req, res, next) => {
-    jwt.verify(
-      req.token,
-      process.env.ACCESS_TOKEN_SECRET,
-      async (err, payload) => {
-        if (err) {
-          res.json({ message: "Forbidden" });
-        } else {
-          const allPosts = await Post.find().populate("comments").exec();
+// GET controller for returning all posts.  Controller accessible to public (no jwt protection)
+exports.allPosts = asyncHandler(async (req, res, next) => {
+  const allPosts = await Post.find()
+    .populate("comments")
+    .sort({ dated: -1 })
+    .exec();
 
-          res.json({ message: "Returned all Posts", allPosts });
-        }
-      }
-    );
-  }),
-];
+  res.json({ message: "Returned all Posts", allPosts });
+});
 
 // Create a new Post controller.  Protected by jwt, calls handleToken helper to add token to request obj
 // then verifies issuance in order to POST new blog post to database
