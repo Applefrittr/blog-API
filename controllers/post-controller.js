@@ -47,26 +47,13 @@ exports.createPost = [
   }),
 ];
 
-// GET controller for returning 1 specific post back.  Protected by jwt
-exports.onePost_GET = [
-  handleToken,
-  asyncHandler(async (req, res, next) => {
-    jwt.verify(
-      req.token,
-      process.env.ACCESS_TOKEN_SECRET,
-      async (err, payload) => {
-        if (err) {
-          res.json({ message: "Forbidden" });
-        } else {
-          const post = await Post.findById(req.params.postid)
-            .populate("comments")
-            .exec();
-          res.json({ message: "Returned post", post });
-        }
-      }
-    );
-  }),
-];
+// GET controller for returning 1 specific post back.  Controller accessible to the public
+exports.onePost_GET = asyncHandler(async (req, res, next) => {
+  const post = await Post.findById(req.params.postid)
+    .populate("comments")
+    .exec();
+  res.json({ message: "Returned post", post });
+});
 
 // Post controller for handling updates to a specific post passed from teh front end.  Protected by jwt
 exports.onePost_POST = [

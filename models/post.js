@@ -5,7 +5,7 @@ const Schema = mongoose.Schema;
 
 const PostSchema = new Schema(
   {
-    title: { type: String, requried: true, trim: true, maxLength: 50 },
+    title: { type: String, requried: true, trim: true, maxLength: 100 },
     text: { type: String, required: true, trim: true },
     dated: Date,
     comments: [{ type: Schema.Types.ObjectId, ref: "Comments" }],
