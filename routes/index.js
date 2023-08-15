@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const postController = require("../controllers/post-controller");
 const userController = require("../controllers/user-controller");
+const commentController = require("../controllers/comment-controller");
 
 // GET home page
 router.get("/", postController.home);
@@ -22,10 +23,16 @@ router.post("/posts/:postid", postController.onePost_POST);
 router.delete("/posts/:postid", postController.onePost_DELETE);
 
 // GET all comments on a specific post
-router.get("/posts/:postid/comments", postController.onePost_comments_GET);
+router.get("/posts/:postid/comments", commentController.onePost_comments_GET);
 
 // POST(create) a new comment on a specific post
-router.post("/posts/:postid/comments", postController.onePost_comments_POST);
+router.post("/posts/:postid/comments", commentController.onePost_comments_POST);
+
+// DELETE a specific comment on a specific post
+router.delete(
+  "/posts/:postid/comments/:commentid",
+  commentController.onePost_comments_DELETE
+);
 
 // Post(create) new user
 router.post("/user/create", userController.create);

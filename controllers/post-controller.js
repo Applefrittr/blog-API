@@ -1,7 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const { body, validationResult } = require("express-validator");
 const Post = require("../models/post");
-const Comment = require("../models/comment");
 const handleToken = require("./handle-token");
 const jwt = require("jsonwebtoken");
 
@@ -100,11 +99,3 @@ exports.onePost_DELETE = [
     );
   }),
 ];
-
-exports.onePost_comments_GET = asyncHandler(async (req, res, next) => {
-  res.send(`Get all comments on specific post ${req.params.postid}`);
-});
-
-exports.onePost_comments_POST = asyncHandler(async (req, res, next) => {
-  res.send(`Create new comment on specific post ${req.params.postid}`);
-});
