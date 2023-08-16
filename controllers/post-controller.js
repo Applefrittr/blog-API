@@ -51,6 +51,9 @@ exports.onePost_GET = asyncHandler(async (req, res, next) => {
   const post = await Post.findById(req.params.postid)
     .populate("comments")
     .exec();
+
+  if (req.headers["origin"] === "http://localhost:3002") console.log("YES!");
+
   res.json({ message: "Returned post", post });
 });
 

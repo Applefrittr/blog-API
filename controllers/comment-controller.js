@@ -23,7 +23,11 @@ exports.onePost_comments_POST = asyncHandler(async (req, res, next) => {
     dated: new Date(),
   });
 
+  post.comments.push(comment);
+
+  await post.save();
   await comment.save();
+
   res.json({ message: "Comment added" });
 });
 
