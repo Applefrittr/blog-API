@@ -49,22 +49,28 @@ exports.create = [
 
 // Log the user in.  Find User in database, compare passwords and then create a jwt to be sent back tot he front end
 exports.user_POST = [
-  // Sanitize user inputs before login logic
-  body("username").trim().escape(),
-  body("password").trim().escape(),
+  // Sanitize and Validate user inputs before login logic
+  body("username", "Username required").trim().isLength({ min: 1 }).escape(),
+  body("password", "Password required").trim().isLength({ min: 1 }).escape(),
   asyncHandler(async (req, res, next) => {
-    const user = await User.findOne({ username: req.body.username }) // Query the user and call lean() to convert to regular JS object to prep for JWT serialization
-      .lean()
-      .exec();
-    if (!user) {
-      res.json({ message: "User does not exist!" });
-      return;
-    }
-    if (await bcrypt.compare(req.body.password, user.password)) {
-      const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET); // Create web token to be passed back to front end
-      res.json({ message: "User logged in", accessToken });
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      res.json({ errors: errors.array() });
     } else {
-      res.json({ message: "Incorrect Password!" });
+      const user = await User.findOne({ username: req.body.username }) // Query the user and call lean() to convert to regular JS object to prep for JWT serialization
+        .lean()
+        .exec();
+      if (!user) {
+        res.json({ errors: [{ msg: "User does not exist" }] });
+        return;
+      }
+      if (await bcrypt.compare(req.body.password, user.password)) {
+        const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET); // Create web token to be passed back to front end
+        res.json({ message: "User logged in", accessToken });
+      } else {
+        res.json({ errors: [{ msg: "Incorrect Password" }] });
+      }
     }
   }),
 ];
