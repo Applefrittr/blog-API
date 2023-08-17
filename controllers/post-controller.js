@@ -21,8 +21,13 @@ exports.allPosts = asyncHandler(async (req, res, next) => {
 // Create a new Post controller.  Protected by jwt, calls handleToken helper to add token to request obj
 // then verifies issuance in order to POST new blog post to database
 exports.createPost = [
+  // Sanitize first
+  body("title").trim().escape(),
+  body("text").trim().escape(),
+  // call handToken to add jwt receieved from front-end to req.header
   handleToken,
   asyncHandler(async (req, res, next) => {
+    // verify token issuance then run logic
     jwt.verify(
       req.token,
       process.env.ACCESS_TOKEN_SECRET,
@@ -36,7 +41,6 @@ exports.createPost = [
             dated: new Date(),
             published: false,
           });
-
           await post.save();
 
           res.json({ message: "New Post Created" });
@@ -52,15 +56,18 @@ exports.onePost_GET = asyncHandler(async (req, res, next) => {
     .populate("comments")
     .exec();
 
-  if (req.headers["origin"] === "http://localhost:3002") console.log("YES!");
-
   res.json({ message: "Returned post", post });
 });
 
 // Post controller for handling updates to a specific post passed from teh front end.  Protected by jwt
 exports.onePost_POST = [
+  // Sanitize first
+  body("title").trim().escape(),
+  body("text").trim().escape(),
+  // call handToken to add jwt receieved from front-end to req.header
   handleToken,
   asyncHandler(async (req, res, next) => {
+    // verify token issuance then run logic
     jwt.verify(
       req.token,
       process.env.ACCESS_TOKEN_SECRET,
